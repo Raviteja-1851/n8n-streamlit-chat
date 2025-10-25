@@ -6,8 +6,8 @@ import json
 # ✅ Always load webhook URL from secrets (no hardcoded ngrok!)
 N8N_WEBHOOK = st.secrets["N8N_WEBHOOK"]
 
-st.set_page_config(page_title="n8n AI Agent Chat", page_icon="🤖")
-st.title("🤖 Chat with n8n AI Agent")
+st.set_page_config(page_title="n8n AI Agent Chat", page_icon="🙂")
+st.title("🙂 Chat with n8n AI Agent")
 
 # Keep chat history
 if "history" not in st.session_state:
@@ -15,20 +15,20 @@ if "history" not in st.session_state:
 
 # Display history so far
 for msg in st.session_state.history:
-    with st.chat_message(msg["role"]):
-        st.write(msg["content"])
+    with st.chat_message("🙂"):   # 👈 use smiley icon for all messages
+        st.markdown(msg["content"], unsafe_allow_html=True)
 
 # Chat input
-user_input = st.chat_input("Ask me anything...")
+user_input = st.chat_input("Say something...")
 
 if user_input:
     # Save and display user message
     st.session_state.history.append({"role": "user", "content": user_input})
-    with st.chat_message("user"):
-        st.write(user_input)
+    with st.chat_message("🙂"):   # 👈 smiley for user too
+        st.markdown(user_input, unsafe_allow_html=True)
 
     # Assistant streaming reply
-    with st.chat_message("assistant"):
+    with st.chat_message("🙂"):   # 👈 smiley for assistant
         placeholder = st.empty()
         text_output = ""
 
@@ -47,9 +47,8 @@ if user_input:
                                 # ✅ Only display "item" events with content
                                 if event.get("type") == "item" and "content" in event:
                                     text_output += event["content"]
-                                    placeholder.write(text_output)
+                                    placeholder.markdown(text_output, unsafe_allow_html=True)
                             except json.JSONDecodeError:
-                                # Ignore keep-alives or malformed bits
                                 pass
 
                     # Save assistant reply to history after stream ends
